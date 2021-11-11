@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "github.com/ihaxolotl/go-grpc-example/internal/transport";
+
+service Users {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+    rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
+    rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse) {}
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+}
+
+/* MetaRequest represents a search filter query, with pagination options
+ * to indicate which results to include in the response. */
+message MetaRequest {
+    int32 page = 1;    // Page number
+    int32 take = 2;    // Number of resources to return per page
+    int32 sort_by = 3; // Sort by ascending or descending
+}
+
+/* MetaResponse represents a search query response, with pagination fields
+ * to describe the resources returned. */
+message MetaResponse {
+    int32 page = 1;          // Page number
+    int32 take = 2;          // Number of resources per page
+    int64 pages_total = 3;   // Total number of pages
+    int64 records_total = 4; // Total number of resources 
+}
+
+/* User respresents a user on the platform. For security reasons,
+ * DO NOT expose the password field to a public API. */
+message User {
+    string id = 1;         // Unique user id
+    string email = 2;      // Email address
+    string name = 3;       // Full name
+    string password = 4;   // Password hash 
+    string created_at = 5; // Timestamp for creation
+    string updated_at = 6; // Timestamp for last updated
+}
+
+message CreateUserRequest {
+    string email = 1;
+    string name = 2;
+    string password = 3;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message GetUsersRequest {
+    MetaRequest meta = 1;
+}
+
+message GetUsersResponse {
+    repeated User users = 1;
+    MetaResponse meta = 2;
+}
+
+message GetUserByIdRequest {
+    string id = 1;
+}
+
+message GetUserByIdResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    string id = 1;
+}
+
+message DeleteUserResponse {
+    string msg = 1;
+}
